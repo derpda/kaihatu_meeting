@@ -6,8 +6,25 @@ services:
         build: ./web
         ports:
             - "8000:8000"
+        depends_on:
+            - postgres
         volumes:
             - ./web:/usr/src/app
         command: python manage.py runserver 0:8000
 
+    postgres:
+        build: ./postgres
+        image: practise_postgres:0.1
+        volumes:
+            - pgdata:/var/lib/postgresql/data/ # persist db data to mounted pgdata
+        restart: unless-stopped
+        environment: #used by init script. This needs to match settings.py
+            LC_ALL: C.UTF-8
+            POSTGRES_USER: ithe
+            POSTGRES_PASSWORD: ithe
+            POSTGRES_DB: practise_db
+        expose:
+            - "5432"
 
+volumes:
+    pgdata:
